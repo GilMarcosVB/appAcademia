@@ -1,55 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class Home extends StatefulWidget {
+  const Home({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<Home> createState() => _HomeState();
 }
 
-class _HomePageState extends State<HomePage> {
-  List<dynamic> servicos = [];
-  bool isLoading = true;
+class _HomeState extends State<Home> {
+  List<dynamic> planos = [];
 
   @override
   void initState() {
     super.initState();
-    carregarServicos(); // Carrega os dados ao iniciar
+    listaPlanos();
   }
 
-  // Método para simular carregamento de dados
-  void carregarServicos() async {
+  Future<void> listaPlanos() async {
     try {
-      // Simulando dados (você pode substituir por uma chamada a uma API)
-      await Future.delayed(const Duration(seconds: 2));
-      setState(() {
-        servicos = [
-          {
-            "titulo": "Corte de Cabelo",
-            "descricao": "Corte moderno e estiloso.",
-            "valor": "50.00",
-            "fotos": [
-              {"imagem": "https://via.placeholder.com/100"}
-            ],
-          },
-          {
-            "titulo": "Manicure e Pedicure",
-            "descricao": "Cuidados especiais para suas unhas.",
-            "valor": "30.00",
-            "fotos": [
-              {"imagem": "https://via.placeholder.com/100"}
-            ],
-          },
-        ];
-      });
+      final response =
+          await http.get(Uri.parse('http://10.56.45.23/public/api/planos'));
+
+      if (response.statusCode == 200) {
+        setState(() {
+          planos = json.decode(response.body);
+        });
+      }
     } catch (e) {
-      mostrarError("Erro ao carregar os serviços.");
+      mostrarError('Erro: $e');
     }
   }
 
   void mostrarError(String mensagem) {
     setState(() {
-      isLoading = false;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(mensagem),
@@ -61,118 +46,121 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Planos Academia"),
-        centerTitle: true,
-        backgroundColor: Colors.blue,
-      ),
-      backgroundColor: Colors.white,
-      drawer: Drawer(
-        child: ListView(
-          children: const [
-            SizedBox(
-              height: 100,
-              child: DrawerHeader(
-                decoration: BoxDecoration(
-                  color: Colors.orange,
-                ),
-                padding: EdgeInsets.symmetric(vertical: 28, horizontal: 16),
-                child: Text(
-                  "Olá, Gilzao",
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
+        appBar: AppBar(
+          title: const Text("Planos Academia"),
+          centerTitle: true,
+          backgroundColor: Colors.blue,
+        ),
+        backgroundColor: Colors.white,
+        drawer: Drawer(
+          child: ListView(
+            children: const [
+              SizedBox(
+                height: 100,
+                child: DrawerHeader(
+                  decoration: BoxDecoration(
+                    color: Colors.orange,
+                  ),
+                  padding: EdgeInsets.symmetric(vertical: 18, horizontal: 10),
+                  child: Text(
+                    "Bem-Vindo , Cliente",
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
-            ),
-            ListTile(
-              leading: Icon(Icons.login),
-              title: Text("Login"),
-            ),
-            ListTile(
-              leading: Icon(Icons.list),
-              title: Text("Serviços"),
-            ),
-            ListTile(
-              leading: Icon(Icons.help),
-              title: Text("Dúvidas"),
-            ),
-            Divider(),
-            ListTile(
-              leading: Icon(Icons.info),
-              title: Text("Sobre o BookMeNow"),
-            ),
-          ],
+              ListTile(
+                leading: Icon(Icons.login),
+                title: Text("Login"),
+              ),
+              ListTile(
+                leading: Icon(Icons.list),
+                title: Text("Serviços"),
+              ),
+              ListTile(
+                leading: Icon(Icons.help),
+                title: Text("Dúvidas"),
+              ),
+              Divider(),
+              ListTile(
+                leading: Icon(Icons.info),
+                title: Text("Academia Brasil"),
+              ),
+            ],
+          ),
         ),
-      ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              itemCount: servicos.length,
-              itemBuilder: (context, index) {
-                final servico = servicos[index];
-                return Card(
-                  elevation: 1,
-                  margin: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      // Verifica se há imagem disponível
-                      if (servico['fotos'] != null &&
-                          servico['fotos'].isNotEmpty)
-                        Image.network(
-                          servico['fotos'][0]['imagem'],
-                          width: 100,
-                          height: 100,
-                          fit: BoxFit.cover,
-                        )
-                      else
-                        Container(
-                          width: 100,
-                          height: 100,
-                          color: Colors.grey,
-                          child: const Icon(
-                            Icons.image_not_supported,
-                            color: Colors.white,
-                          ),
-                        ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                servico['titulo'],
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
+        body: planos.isEmpty
+            ? const Center(child: CircularProgressIndicator())
+            : ListView.builder(
+                itemCount: planos.length,
+                itemBuilder: (context, index) {
+                  final plano = planos[index];
+                  return SizedBox(
+                    height: 150, // Ajuste a altura conforme necessário
+                    child: Card(
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 16),
+                      elevation: 5,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            plano['imagem'] != null
+                                ? Image.network(
+                                    plano['imagem'],
+                                    width: 100,
+                                    height: 100,
+                                    fit: BoxFit.cover,
+                                  )
+                                : Container(
+                                    width: 100,
+                                    height: 100,
+                                    color: Colors.grey,
+                                    child:
+                                        const Icon(Icons.image_not_supported),
+                                  ),
+                            const SizedBox(
+                                width: 16), // Espaço entre a imagem e os dados
+                            // Dados à direita
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    plano['nome_plano'] ?? 'Sem nome',
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                      height: 8), // Espaço entre os textos
+                                  Text(
+                                    'Duração: ${plano['duracao'] ?? 'Sem duração'} dias',
+                                    style: const TextStyle(fontSize: 14),
+                                  ),
+                                  const SizedBox(
+                                      height: 4), // Espaço entre os textos
+                                  Text(
+                                    'Preço: R\$ ${double.tryParse(plano['preco'].toString())?.toStringAsFixed(2) ?? '0.00'}',
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.green,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              const SizedBox(height: 5),
-                              Text(
-                                servico['descricao'],
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              const SizedBox(height: 10),
-                              Text(
-                                'R\$ ${double.tryParse(servico['valor'])?.toStringAsFixed(2) ?? '0.00'}',
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.green,
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
-                );
-              },
-            ),
-    );
+                    ),
+                  );
+                },
+              ));
   }
 }
