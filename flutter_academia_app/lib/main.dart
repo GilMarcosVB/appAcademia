@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_academia_app/home.dart';
 import 'package:flutter_academia_app/login.dart';
@@ -12,7 +10,7 @@ void main() {
       theme: ThemeData(
         primaryColor: Colors.white,
       ),
-      home: LoginPage(),
+      home: Home(),
     ),
   );
 }

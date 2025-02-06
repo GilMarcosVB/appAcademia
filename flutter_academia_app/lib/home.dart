@@ -20,8 +20,8 @@ class _HomeState extends State<Home> {
 
   Future<void> listaPlanos() async {
     try {
-      final response =
-          await http.get(Uri.parse('http://10.56.45.23/public/api/planos'));
+      final response = await http.get(
+          Uri.parse('http://10.56.46.34/SiteDaAcademia/public/api/planos'));
 
       if (response.statusCode == 200) {
         setState(() {
@@ -74,6 +74,9 @@ class _HomeState extends State<Home> {
               ListTile(
                 leading: Icon(Icons.login),
                 title: Text("Login"),
+                onTap: () {
+                  Navigator.pushNamed(context, '/login');
+                },
               ),
               ListTile(
                 leading: Icon(Icons.list),
