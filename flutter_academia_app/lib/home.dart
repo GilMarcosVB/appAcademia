@@ -74,9 +74,6 @@ class _HomeState extends State<Home> {
               ListTile(
                 leading: Icon(Icons.login),
                 title: Text("Login"),
-                onTap: () {
-                  Navigator.pushNamed(context, '/login');
-                },
               ),
               ListTile(
                 leading: Icon(Icons.list),

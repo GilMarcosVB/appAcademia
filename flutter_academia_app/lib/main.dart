@@ -10,7 +10,7 @@ void main() {
       theme: ThemeData(
         primaryColor: Colors.white,
       ),
-      home: Home(),
+      home: LoginPage(),
     ),
   );
 }
