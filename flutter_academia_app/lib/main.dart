@@ -5,12 +5,12 @@ import 'package:flutter_academia_app/login.dart';
 void main() {
   runApp(
     MaterialApp(
-      title: "BookMeNow",
+      title: "Academia",
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primaryColor: Colors.white,
       ),
-      home: LoginPage(),
+      home: const LoginPage(),
     ),
   );
 }

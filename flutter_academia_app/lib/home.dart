@@ -49,7 +49,7 @@ class _HomeState extends State<Home> {
         appBar: AppBar(
           title: const Text("Planos Academia"),
           centerTitle: true,
-          backgroundColor: Colors.blue,
+          backgroundColor: const Color.fromARGB(255, 41, 218, 100),
         ),
         backgroundColor: Colors.white,
         drawer: Drawer(
